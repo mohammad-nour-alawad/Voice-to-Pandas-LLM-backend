@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+vllm
+transformers
+torch  
+accelerate
+openai-whisper
+matplotlib
+python-multipart
