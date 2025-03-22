@@ -7,3 +7,4 @@ accelerate
 openai-whisper
 matplotlib
 python-multipart
+pandas
