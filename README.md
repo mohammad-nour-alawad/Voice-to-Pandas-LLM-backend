@@ -90,8 +90,8 @@ graph TD
 
 ### Installation
 ```bash
-git clone https://github.com/your-repo/ai-voice-assistant.git
-cd ai-voice-assistant
+git clone https://github.com/your-repo/Voice-to-Pandas-LLM-backend.git
+cd Voice-to-Pandas-LLM-backend
 pip install -r requirements.txt
 ```
 
