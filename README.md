@@ -48,36 +48,33 @@ ai-voice-assistant/
 
 ```mermaid
 graph TD
-    A[Client] --> B{{/converse}}
-    A --> C{{/transcribe}}
+    A[Client] -->|POST /converse| B(API: converse)
+    A -->|POST /transcribe| C(API: transcribe)
     
-    B --> D[Create Workflow]
-    D --> E[decide_action]
-    E --> F{Decision}
+    subgraph Conversational Workflow
+        B --> D[Initialize State]
+        D -->|user_input, metadata, history| E[decide_action]
+        E -->|LLM decision| F{Action?}
+        F -->|code_generation| G[generate_code]
+        F -->|chat_response| H[generate_chat_response]
+        G --> I[Update State with Code]
+        H --> J[Generate TTS Audio]
+        J --> K[Update State with Message+Audio]
+        I & K --> L[Return Response]
+    end
     
-    F -->|code_generation| G[generate_code_node]
-    F -->|chat_response| H[generate_chat_response_node]
+    subgraph Transcription Flow
+        C --> M[Save Audio File]
+        M --> N[Whisper STT]
+        N --> O[Return Text]
+    end
     
-    G --> I[[LLM Model]]
-    H --> J[[TTS Model]]
-    C --> K[[Whisper Model]]
-    
-    I --> L[Generated Code]
-    J --> M[Audio Response]
-    K --> N[Transcribed Text]
-    
-    L --> O{API Response}
-    M --> O
-    N --> P{{Transcription Result}}
-    
-    O --> A
-    P --> A
-    
-    style A fill:#4A90E2,color:white
-    style B fill:#50E3C2,color:#333
-    style C fill:#50E3C2,color:#333
-    style E fill:#F5A623,color:white
-    style F fill:#FF6B6B,color:white
+    style B stroke:#4a90e2
+    style C stroke:#50e3c2
+    style E stroke:#f5a623
+    style G stroke:#7ed321
+    style H stroke:#bd10e0
+    style N stroke:#ff6b6b
 ```
 
 
