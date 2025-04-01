@@ -8,13 +8,16 @@ DECIDE_ACTION_PROMPT_TEMPLATE = (
     "Available data: {metadata}\n\n"
     "Options:\n"
     "- code_generation: if the request is a clear technical instruction.\n"
-    "- chat_response: for general conversation.\n\n"
+    "- chat_response: for general conversation or if the answer can be found in the Available data.\n\n"
     "Return a valid JSON with the key 'action'."
 )
 
 # Prompt template for generating a chat response
 CHAT_RESPONSE_PROMPT_TEMPLATE = (
-    "Answer the following in a friendly and concise manner (under 10 words).\n"
+    "Given the user's request and conversation history:\n"
+    "History: {history}\n"
+    "Available data: {metadata}\n\n"
+    "based on the given data and history, answer the following user question in a friendly and concise manner (under 20 words).\n"
     "User: {input}\n"
     "Response:"
 )

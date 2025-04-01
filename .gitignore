@@ -1,12 +1,13 @@
 __pycache__/
 *.py[cod]
-
+exps/
+outs*/
 venv/
 .env
 
 logs/
 
-
+*.wav
 *.npy
 
 *.so
