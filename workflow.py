@@ -98,8 +98,8 @@ def generate_code_node(state: AgentState) -> AgentState:
     return state
 
 def generate_chat_response_node(state: AgentState) -> AgentState:
-    prompt = CHAT_RESPONSE_PROMPT_TEMPLATE.format(input=state["user_input"])
-    sampling_params = SamplingParams(max_tokens=20, temperature=0.3, top_p=0.9, top_k=50)
+    prompt = CHAT_RESPONSE_PROMPT_TEMPLATE.format(input=state["user_input"], metadata=state["metadata"], history=state["conversation_history"])
+    sampling_params = SamplingParams(max_tokens=30, temperature=0.3, top_p=0.9, top_k=50)
     outputs = llm.generate([prompt], sampling_params)
     response = outputs[0].outputs[0].text.strip()
     state["response_message"] = response

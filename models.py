@@ -29,6 +29,6 @@ tts = TTS(model_name=TTS_MODEL_NAME, progress_bar=True)
 
 def text_to_speech(text: str) -> bytes:
     audio_buffer = io.BytesIO()
-    tts.tts_to_file(text=text, file_path=audio_buffer, speaker=TTS_SPEAKER)
+    tts.tts_to_file(text=text, file_path=audio_buffer, speaker=TTS_SPEAKER, speed=1.9)
     audio_buffer.seek(0)
     return audio_buffer.read()
