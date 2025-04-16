@@ -9,4 +9,3 @@ matplotlib
 python-multipart
 pandas
 langgraph
-gtts

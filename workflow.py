@@ -9,35 +9,54 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 
 # Import prompt templates and schemas
-from prompts import DECIDE_ACTION_PROMPT_TEMPLATE, CHAT_RESPONSE_PROMPT_TEMPLATE, CODE_GENERATION_PROMPT_TEMPLATE
+from prompts import DECIDE_ACTION_PROMPT, CHAT_RESPONSE_PROMPT, CODE_GENERATION_PROMPT
 from schemas import AgentState, Decision
-from models import llm, text_to_speech
+from models import llm, tokenizer, text_to_speech
 
-def decide_action(state: AgentState) -> AgentState:
-    parser = JsonOutputParser(pydantic_object=Decision)
-    prompt = ChatPromptTemplate.from_template(DECIDE_ACTION_PROMPT_TEMPLATE)
-    try:
-        formatted_prompt = prompt.format(
+
+def format_prompt(messages_template: list, state: AgentState, metadata_fields: dict = None) -> str:
+    """Format chat template with current state and metadata"""
+    formatted_messages = []
+    
+    for msg in messages_template:
+        content = msg["content"].format(
             input=state["user_input"],
             history=state["conversation_history"],
-            metadata=state["metadata"]
+            metadata=state["metadata"],
+            **(metadata_fields or {})
         )
-    except Exception as e:
-        formatted_prompt = f"User request: {state['user_input']}"
+        formatted_messages.append({"role": msg["role"], "content": content})
+    
+    return tokenizer.apply_chat_template(
+        formatted_messages,
+        tokenize=False,
+        add_generation_prompt=True
+    )
 
-    def llm_run(text: str) -> str:
-        sampling_params = SamplingParams(max_tokens=150, temperature=0.5)
-        outputs = llm.generate([text], sampling_params)
-        return outputs[0].outputs[0].text.strip()
 
+def decide_action(state: AgentState) -> AgentState:
+    """Decision node with enhanced error handling"""
+    parser = JsonOutputParser(pydantic_object=Decision)
+    
     try:
-        llm_response = llm_run(formatted_prompt)
-        decision = parser.parse(llm_response)
+        prompt = format_prompt(DECIDE_ACTION_PROMPT, state)
+        sampling_params = SamplingParams(
+            max_tokens=200,
+            temperature=0.3,
+            stop=["</s>", "\n\n"]
+        )
+        
+        #print("decide_prompt:\n", prompt)
+        outputs = llm.generate([prompt], sampling_params)
+        raw_response = outputs[0].outputs[0].text.strip()
+        decision = parser.parse(raw_response)
     except Exception as e:
+        print(f"Decision error: {str(e)}")
         decision = {"action": "chat_response"}
-
+    
     state["decision"] = decision
     return state
+
 
 def route_action(state: AgentState) -> str:
     try:
@@ -45,74 +64,65 @@ def route_action(state: AgentState) -> str:
     except Exception:
         return "chat_response"
 
-def generate_code_internal(command: str, metadata: Dict[str, Any]):
-    start_time = time.perf_counter()
-    
-    columns = metadata.get('columns', [])
-    dtypes = metadata.get('dtypes', {})
-    sample_rows = metadata.get('sample_rows', [])
-    numerical_ranges = metadata.get('numerical_ranges', {})
-    categorical_values = metadata.get('categorical_values', {})
-
-    formatted_prompt = CODE_GENERATION_PROMPT_TEMPLATE.format(
-        columns=columns,
-        dtypes=dtypes,
-        sample_rows=sample_rows,
-        numerical_ranges=numerical_ranges,
-        categorical_values=categorical_values,
-        command=command
-    )
-    
-    sampling_params = SamplingParams(
-        max_tokens=300,
-        temperature=0.7,
-        top_p=0.9,
-        top_k=50,
-        stop='```'
-    )
-
-    outputs = llm.generate([formatted_prompt], sampling_params=sampling_params)
-    generated_text = outputs[0].outputs[0].text
-
-    start_idx = generated_text.find("```")
-    end_idx = generated_text.find("```", start_idx + 3) if start_idx != -1 else -1
-
-    if start_idx != -1 and end_idx != -1:
-        code = generated_text[start_idx+3:end_idx].strip()
-    else:
-        code = generated_text.strip()
-
-    code = code.replace("```", "")
-    end_time = time.perf_counter()
-    latency = end_time - start_time
-
-    return {
-        "code": code,
-        "latency_seconds": latency
-    }
 
 def generate_code_node(state: AgentState) -> AgentState:
-    code_info = generate_code_internal(state["user_input"], state["metadata"])
-    state["generated_code"] = code_info.get("code")
-    state["response_message"] = "Code generated, please execute!"
+    """Code generation with structured metadata handling"""
+    metadata = state["metadata"]
+    code_prompt = format_prompt(
+        CODE_GENERATION_PROMPT,
+        state,
+    )
+    #print("code_prompt:\n", code_prompt)
+    
+    sampling_params = SamplingParams(
+        max_tokens=400,
+        temperature=0.2,
+        top_p=0.95,
+        stop=["<|", "</s>"]
+    )
+    
+    start_time = time.perf_counter()
+    outputs = llm.generate([code_prompt], sampling_params)
+    generated_text = outputs[0].outputs[0].text
+    latency = time.perf_counter() - start_time
+    
+    # Extract code block
+    code_block = generated_text.split("```python")[-1].split("```")[0].strip()
+    
+    state.update({
+        "generated_code": code_block,
+        "response_message": "Here's the generated code:",
+        "latency": f"{latency:.2f}s"
+    })
     return state
 
 def generate_chat_response_node(state: AgentState) -> AgentState:
-    prompt = CHAT_RESPONSE_PROMPT_TEMPLATE.format(input=state["user_input"], metadata=state["metadata"], history=state["conversation_history"])
-    sampling_params = SamplingParams(max_tokens=30, temperature=0.3, top_p=0.9, top_k=50)
-    outputs = llm.generate([prompt], sampling_params)
+    """Chat response generation with TTS integration"""
+    chat_prompt = format_prompt(CHAT_RESPONSE_PROMPT, state)
+    
+    sampling_params = SamplingParams(
+        max_tokens=200,
+        temperature=0.7,
+        top_p=0.9,
+        stop=["</s>"]
+    )
+    
+    
+    #print("chat_prompt:\n", chat_prompt)
+    outputs = llm.generate([chat_prompt], sampling_params)
     response = outputs[0].outputs[0].text.strip()
-    state["response_message"] = response
-
+    
+    # Generate audio response
     try:
         audio_bytes = text_to_speech(response)
-        audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-        state["response_audio"] = audio_base64
+        state["response_audio"] = base64.b64encode(audio_bytes).decode("utf-8")
     except Exception as e:
         print(f"TTS Error: {str(e)}")
         state["response_audio"] = None
-
+    
+    state["response_message"] = response
     return state
+
 
 def create_workflow():
     builder = StateGraph(AgentState)
