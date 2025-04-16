@@ -41,7 +41,7 @@ async def converse(request: ConversationRequest):
             "audio": result.get("response_audio"),
             "updated_history": result["conversation_history"] + [{
                 "user": request.user_input,
-                "system": result.get("response_message") or result.get("generated_code")
+                "system": result.get("generated_code") or result.get("response_message")
             }]
         }
         return response_data

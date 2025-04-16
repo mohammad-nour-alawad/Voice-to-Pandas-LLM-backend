@@ -21,8 +21,30 @@ print(f"Using device: {device}")
 print("Loading Whisper model...")
 whisper_model = whisper.load_model(STT_MODEL, device=device)
 
+
+# models.py
+
+from transformers import AutoTokenizer, AutoConfig
+
+print("Loading tokenizer...")
+tokenizer = AutoTokenizer.from_pretrained(
+    LLM_MODEL_NAME,
+    use_fast=True,
+    padding_side="left"
+)
+
+if tokenizer.pad_token is None:
+    tokenizer.add_special_tokens({"pad_token": "[PAD]"})
+
+llm_config = AutoConfig.from_pretrained(LLM_MODEL_NAME)
+
 print("Loading Language Model with vLLM...")
-llm = LLM(LLM_MODEL_NAME, enforce_eager=True)
+llm = LLM(
+    model=LLM_MODEL_NAME,
+    tokenizer=LLM_MODEL_NAME,
+    enforce_eager=True,
+    max_model_len=llm_config.max_position_embeddings
+)
 
 print("Initializing TTS...")
 tts = TTS(model_name=TTS_MODEL_NAME, progress_bar=True)

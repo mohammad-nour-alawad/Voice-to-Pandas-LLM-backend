@@ -1,47 +1,70 @@
 # prompts.py
 
-# Prompt template for deciding the next action
-DECIDE_ACTION_PROMPT_TEMPLATE = (
-    "Analyze the user's request and conversation history. Decide next action.\n"
-    "History: {history}\n"
-    "Request: {input}\n"
-    "Available data: {metadata}\n\n"
-    "Options:\n"
-    "- code_generation: if the request is a clear technical instruction.\n"
-    "- chat_response: for general conversation or if the answer can be found in the Available data.\n\n"
-    "Return a valid JSON with the key 'action'."
-)
+# Decision action prompt as chat messages
+DECIDE_ACTION_PROMPT = [
+    {
+        "role": "system",
+        "content": (
+            "Analyze the user's request and conversation history to determine the appropriate action. "
+            "Available dataset metadata: {metadata}\n\n"
+            "Action options:\n"
+            "1. code_generation - For clear technical requests requiring data analysis/visualization\n"
+            "2. chat_response - For general questions, data inquiries, or non-technical conversations\n\n"
+            "Examples:\n"
+            "- 'Show distribution of sales': code_generation\n"
+            "- 'What columns are available?': chat_response\n"
+            "- 'Explain this code': chat_response\n"
+            "Always return valid JSON with 'action' key."
+        )
+    },
+    {
+        "role": "user",
+        "content": (
+            "Conversation History:\n{history}\n\n"
+            "User Request:\n{input}\n\n"
+            "Response format (JSON):"
+        )
+    }
+]
 
-# Prompt template for generating a chat response
-CHAT_RESPONSE_PROMPT_TEMPLATE = (
-    "Given the user's request and conversation history:\n"
-    "History: {history}\n"
-    "Available data: {metadata}\n\n"
-    "based on the given data and history, answer the following user question in a friendly and concise manner (under 20 words).\n"
-    "User: {input}\n"
-    "Response:"
-)
+# Chat response prompt as chat messages
+CHAT_RESPONSE_PROMPT = [
+    {
+        "role": "system",
+        "content": (
+            "You are a friendly assistant helping the user understand data.\n"
+            "Do not write code. Do not use bullet points, symbols, markdown, or any formatting.\n"
+            "Respond in simple, clear sentences suitable for reading aloud by a Text-to-Speech (TTS) system.\n"
+            "Always use natural, spoken language.\n\n"
+            "Current dataset details:\n{metadata}\n\n"
+            "Conversation history:\n{history}\n\n"
+            "If you're unsure about the user's request, ask for clarification in a polite and simple way.\n"
+            "If the question is technical or requires code, kindly suggest generating Python code instead.\n"
+        )
+    },
+    {
+        "role": "user",
+        "content": "Question: {input}"
+    }
+]
 
-# Prompt template for code generation. It uses metadata placeholders.
-CODE_GENERATION_PROMPT_TEMPLATE = (
-    "You are an expert data scientist. Here is metadata for a DataFrame named 'df':\n"
-    "Columns: {columns}\n"
-    "Data Types: {dtypes}\n"
-    "Sample Rows: {sample_rows}\n"
-    "Numerical Ranges: {numerical_ranges}\n"
-    "Categorical Values: {categorical_values}\n\n"
-    "User command:\n"
-    "{command}\n\n"
-    "Generate a concise Python snippet that accomplishes the user’s request. "
-    "You may use any of these libraries: Pandas, NumPy, Matplotlib, Seaborn, Plotly. "
-    "Assume 'df' is already defined, so do NOT write code to read CSV or create 'df'.\n\n"
-    "Examples:\n"
-    "Example 1:\n"
-    "```python\nimport seaborn as sns\nsns.countplot(x='some column', data=df)\nplt.show()\n```\n\n"
-    "Example 2:\n"
-    "```python\ncount_above_70 = df[df['some column'] > 70].shape[0]\ncount_above_70\n```\n\n"
-    "Example 3:\n"
-    "```python\nimport plotly.express as px\npx.histogram(df, x='some column', nbins=20)\nfig.show()\n```\n\n"
-    "Now generate code for the user command: {command}\n"
-    "```python"
-)
+
+# Code generation prompt as chat messages
+CODE_GENERATION_PROMPT = [
+    {
+        "role": "system",
+        "content": (
+            "You are a data science expert. Generate Python code for DataFrame 'df' with Current dataset details:\n"
+            "{metadata}\n\n"
+            "Here is the conversation History:\n{history}\n"
+            "Instructions:\n"
+            "1. Use Pandas/Matplotlib/Seaborn/Plotly\n"
+            "2. Assume 'df' exists\n"
+            "3. Critical! generate only code wihtout any comments or explanations, just python code!"
+            "Example Responses:\n"
+            "User: Plot age distribution\n"
+            "Assistant: ```python\nimport matplotlib.pyplot as plt\nplt.hist(df['age'])\nplt.show()```"
+        )
+    },
+    {"role": "user", "content": "Request: {input}"}
+]
