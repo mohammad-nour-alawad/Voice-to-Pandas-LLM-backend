@@ -40,6 +40,7 @@ CHAT_RESPONSE_PROMPT = [
             "Conversation history:\n{history}\n\n"
             "If you're unsure about the user's request, ask for clarification in a polite and simple way.\n"
             "If the question is technical or requires code, kindly suggest generating Python code instead.\n"
+            "Dont talk a lot, be very very brief and precise.\n"
         )
     },
     {
@@ -60,10 +61,14 @@ CODE_GENERATION_PROMPT = [
             "Instructions:\n"
             "1. Use Pandas/Matplotlib/Seaborn/Plotly\n"
             "2. Assume 'df' exists\n"
-            "3. Critical! generate only code wihtout any comments or explanations, just python code!"
-            "Example Responses:\n"
+            "3. For showing output, use expression form (variable name), not print/display.\n"
+            "4. Critical! generate only code wihtout any comments or explanations, just python code!"
+            "Example 1:\n"
             "User: Plot age distribution\n"
             "Assistant: ```python\nimport matplotlib.pyplot as plt\nplt.hist(df['age'])\nplt.show()```"
+            "Example 2:\n"
+            "User: Show first 5 rows\n"
+            "Assistant: ```python\nfirst_5 = df.head()\nfirst_5```"
         )
     },
     {"role": "user", "content": "Request: {input}"}

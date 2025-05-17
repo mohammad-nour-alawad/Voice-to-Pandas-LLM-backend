@@ -1,0 +1,16 @@
+Plot a histogram of feat_1 with 25 bins and add a title.
+Compute summary statistics (mean, median, std) for all 93 features.
+Generate a heatmap of the correlation matrix for all features using seaborn.
+Create a pairplot for the first 8 features (feat_1 to feat_8).
+Get the product id with the maximum value in feat_3.
+Plot a boxplot for feat_10 to examine distribution and outliers.
+Plot a histogram of feat_15 with 20 bins.
+Calculate the average value of feat_20.
+Create a scatter plot of feat_5 vs feat_6 with a regression line.
+Bin feat_25 into 5 equal intervals and show frequency in a bar chart.
+Perform PCA on all features and plot the first two principal components.
+Generate a violin plot for the distribution of feat_30 using seaborn.
+Plot a line chart of the cumulative sum of feat_2 over the dataset index.
+what kind of information do you think the column feat_42 captures?
+Give me a short suggestion on how I could preprocess these 93 numerical features before building a model.
+Is there any column in this dataset that should probably be treated as categorical instead of numeric? Briefly explain your idea.

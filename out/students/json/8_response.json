@@ -1,0 +1,16 @@
+{
+  "code": "mean_math_score_by_lunch = df.groupby('lunch')['math score'].mean()\nmean_math_score_by_lunch",
+  "message": "Here's the generated code:",
+  "audio": null,
+  "updated_history": [
+    {
+      "user": "Group the data by lunch type and compute the mean math score.",
+      "system": "mean_math_score_by_lunch = df.groupby('lunch')['math score'].mean()\nmean_math_score_by_lunch"
+    }
+  ],
+  "timing": {
+    "decide_action_sec": 0.2688,
+    "generate_code_sec": 0.6915,
+    "overall_request_sec": 0.9661
+  }
+}

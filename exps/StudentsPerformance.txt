@@ -1,0 +1,16 @@
+Plot a countplot of gender using seaborn.
+Generate a boxplot of math score grouped by gender using seaborn.
+Calculate the average reading score for each race/ethnicity group.
+Create a histogram of writing score with 20 bins using matplotlib.
+Plot a scatter of math score vs reading score with matplotlib.
+Compute the Pearson correlation between math, reading, and writing scores.
+Plot a violin plot of math score by parental education using seaborn.
+Group the data by lunch type and compute the mean math score.
+Plot a bar chart showing the count of students for each test prep course.
+Calculate the median reading score for each test prep course category.
+Create a pairplot of math, reading, writing scores using seaborn.
+Generate a heatmap of the correlation matrix for math, reading, writing scores.
+Plot a boxplot of reading score by race/ethnicity using seaborn.
+Explain what the parental level of education column represents and why it might influence student scores.
+Which of the score columns would you expect to be most correlated, and why?
+This dataset mixes categorical and numeric data. Can you tell the categorical columns and describe them in everyday language?

@@ -1,0 +1,16 @@
+Plot a countplot of flights by UniqueCarrier using seaborn.
+Calculate the average ArrDelay for each Month.
+Create a scatter plot of DepDelay versus ArrDelay with matplotlib.
+Generate a histogram of FlightNum with 30 bins.
+Visualize the distribution of Distance using seaborn distplot.
+Compute the total number of cancelled flights in the dataset.
+Get the flight with the maximum ActualElapsedTime.
+Count flights that departed after 1000 (DepTime > 1000).
+Plot a boxplot of TaxiOut times grouped by Origin using seaborn.
+Display a heatmap of the correlation matrix of numerical columns using matplotlib.
+Calculate the percentage of flights with DepDelay > 15 minutes.
+Group by DayOfWeek and compute the average AirTime.
+Create a line plot of average DepDelay over DayofMonth with matplotlib.
+What does the column CRSDepTime stand for, and is it stored as a number or a category?
+Give me a brief explanation of why flight distance could affect arrival delay.
+What do you think we should do as data‑cleaning step before modeling? please explain it.

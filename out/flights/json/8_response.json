@@ -1,0 +1,16 @@
+{
+  "code": "flights_after_1000 = df[df['DepTime'] > 1000].shape[0]\nflights_after_1000",
+  "message": "Here's the generated code:",
+  "audio": null,
+  "updated_history": [
+    {
+      "user": "Count flights that departed after 1000 (DepTime > 1000).",
+      "system": "flights_after_1000 = df[df['DepTime'] > 1000].shape[0]\nflights_after_1000"
+    }
+  ],
+  "timing": {
+    "decide_action_sec": 0.2901,
+    "generate_code_sec": 0.9673,
+    "overall_request_sec": 1.2673
+  }
+}

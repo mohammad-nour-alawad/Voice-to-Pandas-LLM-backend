@@ -1,7 +1,7 @@
 # schemas.py
 
 from typing import List, Dict, Any, Optional, TypedDict
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # TypedDict for internal agent state
 class AgentState(TypedDict):
@@ -12,6 +12,11 @@ class AgentState(TypedDict):
     response_message: Optional[str]
     response_audio: Optional[str]
     decision: Optional[Dict[str, Any]]
+
+    timing_info: Dict[str, float] = Field(default_factory=dict)
+
+    class Config:
+        extra = "allow"
 
 # TypedDict for decision result
 class Decision(TypedDict):

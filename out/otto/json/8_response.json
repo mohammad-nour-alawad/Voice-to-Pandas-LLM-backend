@@ -1,0 +1,16 @@
+{
+  "code": "avg_feat_20 = df['feat_20'].mean()\navg_feat_20",
+  "message": "Here's the generated code:",
+  "audio": null,
+  "updated_history": [
+    {
+      "user": "Calculate the average value of feat_20.",
+      "system": "avg_feat_20 = df['feat_20'].mean()\navg_feat_20"
+    }
+  ],
+  "timing": {
+    "decide_action_sec": 0.3071,
+    "generate_code_sec": 0.6602,
+    "overall_request_sec": 0.9772
+  }
+}

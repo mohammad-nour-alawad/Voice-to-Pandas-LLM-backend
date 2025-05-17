@@ -1,0 +1,16 @@
+{
+  "code": "percentage_delayed = (df[df['DepDelay'] > 15].shape[0] / df.shape[0]) * 100\npercentage_delayed",
+  "message": "Here's the generated code:",
+  "audio": null,
+  "updated_history": [
+    {
+      "user": "Calculate the percentage of flights with DepDelay > 15 minutes.",
+      "system": "percentage_delayed = (df[df['DepDelay'] > 15].shape[0] / df.shape[0]) * 100\npercentage_delayed"
+    }
+  ],
+  "timing": {
+    "decide_action_sec": 0.2866,
+    "generate_code_sec": 0.9876,
+    "overall_request_sec": 1.284
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "code": "import matplotlib.pyplot as plt\n\ntest_prep_counts = df['test preparation course'].value_counts()\ntest_prep_counts.plot(kind='bar')\nplt.xlabel('Test Preparation Course')\nplt.ylabel('Count of Students')\nplt.title('Count of Students for Each Test Prep Course')\nplt.show()",
+  "message": "Here's the generated code:",
+  "audio": null,
+  "updated_history": [
+    {
+      "user": "Plot a bar chart showing the count of students for each test prep course.",
+      "system": "import matplotlib.pyplot as plt\n\ntest_prep_counts = df['test preparation course'].value_counts()\ntest_prep_counts.plot(kind='bar')\nplt.xlabel('Test Preparation Course')\nplt.ylabel('Count of Students')\nplt.title('Count of Students for Each Test Prep Course')\nplt.show()"
+    }
+  ],
+  "timing": {
+    "decide_action_sec": 0.2655,
+    "generate_code_sec": 1.4505,
+    "overall_request_sec": 1.7207
+  }
+}

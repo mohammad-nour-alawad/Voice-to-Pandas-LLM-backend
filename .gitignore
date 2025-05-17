@@ -1,12 +1,11 @@
 __pycache__/
 *.py[cod]
-exps/
 outs*/
 venv/
 .env
-
+out_ref/
 logs/
-
+temp_audio.wav
 *.wav
 *.npy
 
